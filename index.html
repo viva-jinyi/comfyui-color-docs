@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComfyUI Color System - Tailwind & PrimeVue</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: #f8f9fa;
+      color: #212529;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      color: #3b82f6;
+      border-bottom-color: #10b981;
+    }
+
+    .tab:hover {
+      color: #059669;
+    }
+
+    /* Content sections */
+    .content {
+      display: none;
+    }
+
+    .content.active {
+      display: block;
+    }
+
+    /* Section headers */
+    .section-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      opacity: 0.9;
+    }
+
+    /* Color grid */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .color-family {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .color-family:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .color-family-header {
+      padding: 1rem 1.25rem;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .color-family-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .color-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .color-item {
+      display: flex;
+      align-items: center;
+      padding: 0.625rem 1.25rem;
+      border-bottom: 1px solid #f1f3f5;
+      transition: background 0.2s;
+    }
+
+    .color-item:hover {
+      background: #f8f9fa;
+    }
+
+    .color-item:last-child {
+      border-bottom: none;
+    }
+
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      margin-right: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .color-info {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .color-name {
+      font-weight: 500;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .color-hex {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      font-size: 0.85rem;
+      color: #868e96;
+      background: #f1f3f5;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Theme comparison */
+    .theme-comparison {
+      margin-bottom: 3rem;
+    }
+
+    .theme-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .theme-section {
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-light {
+      background: white;
+      border: 1px solid #e9ecef;
+    }
+
+    .theme-dark {
+      background: #18181b;
+      color: #ffffff;
+      border: 1px solid #3f3f46;
+    }
+
+    .theme-label {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .theme-light .theme-label {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .theme-dark .theme-label {
+      background: #1e293b;
+      color: #cbd5e1;
+    }
+
+    .neutral-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .neutral-item {
+      text-align: center;
+      padding: 1rem 0.5rem;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .neutral-item:hover {
+      transform: scale(1.05);
+    }
+
+    .theme-light .neutral-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+    }
+
+    .theme-dark .neutral-item {
+      background: #27272a;
+      border: 1px solid #3f3f46;
+    }
+
+    .neutral-swatch {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .neutral-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .neutral-hex {
+      font-size: 0.7rem;
+      font-family: monospace;
+      opacity: 0.7;
+    }
+
+    /* Usage examples */
+    .usage-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .usage-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .usage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .usage-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+
+    .usage-card h4 {
+      color: #3b82f6;
+      margin-bottom: 0.75rem;
+      font-size: 1.1rem;
+    }
+
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+
+    /* Copy button */
+    .copy-btn {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover .color-hex {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .copy-btn::after {
+      content: '클릭하여 복사';
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: #333;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .copy-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Inline color items */
+    .color-item-inline {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .color-label {
+      font-weight: 500;
+      min-width: 80px;
+      color: inherit;
+    }
+
+    .color-swatch-inline {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .theme-row {
+        grid-template-columns: 1fr;
+      }
+
+      .color-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 ComfyUI 디자인 시스템 컬러 가이드</h1>
+    <p class="subtitle">Tailwind CSS & PrimeVue 통합 컬러 시스템</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('overview')">개요</button>
+      <button class="tab" onclick="showTab('tailwind')">Tailwind 색상</button>
+      <button class="tab" onclick="showTab('primevue')">PrimeVue 색상</button>
+      <button class="tab" onclick="showTab('neutral')">Neutral 테마별 비교</button>
+      <button class="tab" onclick="showTab('usage')">사용 가이드</button>
+      <button class="tab" onclick="showTab('statistics')">📊 사용 통계</button>
+    </div>
+
+    <!-- Overview Content -->
+    <div id="overview" class="content active">
+      <div class="section-header">
+        <h2>컬러 시스템 개요</h2>
+        <p>ComfyUI는 Tailwind CSS와 PrimeVue의 컬러 시스템을 통합하여 사용합니다</p>
+      </div>
+
+      <div class="usage-section">
+        <h3 class="usage-title">주요 특징</h3>
+        <div class="usage-grid">
+          <div class="usage-card">
+            <h4>🎯 Tailwind CSS</h4>
+            <p>유틸리티 클래스 기반 스타일링</p>
+            <div class="code-block">text-zinc-500, bg-blue-600</div>
+          </div>
+          <div class="usage-card">
+            <h4>🎨 PrimeVue</h4>
+            <p>컴포넌트 테마 시스템</p>
+            <div class="code-block">var(--p-surface-500)</div>
+          </div>
+          <div class="usage-card">
+            <h4>🌓 다크 모드</h4>
+            <p>자동 테마 전환 지원</p>
+            <div class="code-block">.dark-theme 클래스 적용</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tailwind Content -->
+    <div id="tailwind" class="content">
+      <div class="section-header">
+        <h2>Tailwind CSS 색상 팔레트</h2>
+        <p>프로젝트에서 사용하는 Tailwind 색상 시스템</p>
+      </div>
+
+      <h3 style="margin: 2rem 0 1rem; color: #3b82f6;">✨ Overridden Colors</h3>
+      <p style="color: #666; margin-bottom: 1rem;">tailwind.config.js에서 재정의한 커스텀 색상</p>
+      <div class="color-grid" id="tailwind-overridden"></div>
+
+      <h3 style="margin: 2rem 0 1rem; color: #64748b;">📦 Default Colors</h3>
+      <p style="color: #666; margin-bottom: 1rem;">Tailwind CSS 기본 색상 팔레트</p>
+      <div class="color-grid" id="tailwind-default"></div>
+    </div>
+
+    <!-- PrimeVue Content -->
+    <div id="primevue" class="content">
+      <div class="section-header">
+        <h2>PrimeVue Aura 테마 색상</h2>
+        <p>컴포넌트에서 사용되는 시맨틱 색상 토큰 (Aura 테마 + Blue primary)</p>
+      </div>
+
+      <!-- Primitive Colors -->
+      <h3 style="margin: 2rem 0 1rem; color: #3b82f6;">🎨 Primitive Colors</h3>
+      <p style="color: #666; margin-bottom: 1rem;">PrimeVue에서 사용 가능한 기본 색상 팔레트</p>
+      <div class="color-grid" id="primevue-primitives"></div>
+
+      <!-- Semantic Colors - Light & Dark Theme -->
+      <h3 style="margin: 3rem 0 1rem; color: #3b82f6;">🎨 Semantic Tokens</h3>
+      <div class="theme-comparison">
+        <div class="theme-row">
+          <!-- Light Theme -->
+          <div class="theme-section theme-light">
+            <span class="theme-label">Light Theme</span>
+            <div id="semantic-light" style="padding: 1rem;"></div>
+          </div>
+          
+          <!-- Dark Theme -->
+          <div class="theme-section theme-dark">
+            <span class="theme-label">Dark Theme</span>
+            <div id="semantic-dark" style="padding: 1rem;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neutral Theme Comparison -->
+    <div id="neutral" class="content">
+      <div class="section-header">
+        <h2>테마별 자동 색상 전환</h2>
+        <p>PrimeVue CSS 변수와 Tailwind 클래스의 테마별 동작</p>
+      </div>
+
+      <!-- PrimeVue Automatic Theme Colors -->
+      <div class="usage-section" style="margin-bottom: 2rem;">
+        <h3 class="usage-title">🎨 PrimeVue 자동 테마 색상</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">클래스 없이도 자동으로 테마에 맞춰 변경되는 색상들</p>
+        
+        <div class="theme-row">
+          <div class="theme-section theme-light">
+            <span class="theme-label">Light Theme</span>
+            <div style="padding: 1rem;">
+              <div style="margin-bottom: 1.5rem;">
+                <h4 style="color: #334155; margin-bottom: 0.5rem;">기본 색상 (클래스 없음)</h4>
+                <div style="padding: 1rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;">
+                  <p style="color: #334155;">일반 텍스트: color → <code style="background: #f1f3f5; padding: 2px 6px; border-radius: 4px;">#334155</code></p>
+                  <p style="color: #64748b; margin-top: 0.5rem;">Muted 텍스트: text-muted → <code style="background: #f1f3f5; padding: 2px 6px; border-radius: 4px;">#64748b</code></p>
+                  <p style="margin-top: 0.5rem;">배경: background → <code style="background: #f1f3f5; padding: 2px 6px; border-radius: 4px;">#ffffff</code></p>
+                  <p style="margin-top: 0.5rem;">보더: border → <code style="background: #f1f3f5; padding: 2px 6px; border-radius: 4px;">#e2e8f0</code></p>
+                </div>
+              </div>
+              
+              <div>
+                <h4 style="color: #334155; margin-bottom: 0.5rem;">CSS 변수</h4>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
+                  <div>--p-text-color: #334155</div>
+                  <div>--p-text-muted-color: #64748b</div>
+                  <div>--p-surface-0: #ffffff</div>
+                  <div>--p-surface-100: #f1f5f9</div>
+                  <div>--p-border-color: #e2e8f0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="theme-section theme-dark">
+            <span class="theme-label">Dark Theme</span>
+            <div style="padding: 1rem;">
+              <div style="margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 0.5rem;">기본 색상 (클래스 없음)</h4>
+                <div style="padding: 1rem; background: #09090b; border: 1px solid #3f3f46; border-radius: 8px;">
+                  <p>일반 텍스트: color → <code style="background: #27272a; padding: 2px 6px; border-radius: 4px;">#ffffff</code></p>
+                  <p style="color: #a1a1aa; margin-top: 0.5rem;">Muted 텍스트: text-muted → <code style="background: #27272a; padding: 2px 6px; border-radius: 4px;">#a1a1aa</code></p>
+                  <p style="margin-top: 0.5rem;">배경: background → <code style="background: #27272a; padding: 2px 6px; border-radius: 4px;">#18181b</code></p>
+                  <p style="margin-top: 0.5rem;">보더: border → <code style="background: #27272a; padding: 2px 6px; border-radius: 4px;">#3f3f46</code></p>
+                </div>
+              </div>
+              
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">CSS 변수</h4>
+                <div style="background: #27272a; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
+                  <div>--p-text-color: #ffffff</div>
+                  <div>--p-text-muted-color: #a1a1aa</div>
+                  <div>--p-surface-0: #ffffff</div>
+                  <div>--p-surface-900: #18181b</div>
+                  <div>--p-border-color: #3f3f46</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tailwind text-muted Usage -->
+      <div class="usage-section" style="margin-bottom: 2rem;">
+        <h3 class="usage-title">✨ Tailwind text-muted 클래스</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">tailwind.config.js에 정의된 text-muted 색상</p>
+        
+        <div class="usage-card" style="max-width: 600px; margin: 0 auto;">
+          <h4>설정 코드</h4>
+          <div class="code-block">
+textColor: {
+  muted: 'var(--p-text-muted-color)',
+  highlight: 'var(--p-primary-color)'
+}
+          </div>
+          <p style="margin-top: 1rem;">사용법: <code style="background: #f1f3f5; padding: 2px 6px; border-radius: 4px;">class="text-muted"</code></p>
+          <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">→ PrimeVue의 CSS 변수를 참조하여 테마에 따라 자동 변경</p>
+        </div>
+      </div>
+
+      <!-- Neutral Color Palette -->
+      <div class="section-header" style="background: linear-gradient(135deg, #64748b 0%, #475569 100%);">
+        <h2>Neutral 색상 팔레트</h2>
+        <p>⚠️ 주의: Tailwind neutral은 독립적인 색상입니다 (PrimeVue surface와 별개)</p>
+      </div>
+
+      <div class="theme-comparison">
+        <div class="theme-row">
+          <div class="theme-section theme-light">
+            <span class="theme-label">Light Theme</span>
+            <h3 style="color: #334155; margin-bottom: 0.5rem;">밝은 배경에서의 Neutral 색상</h3>
+            <p style="color: #64748b; font-size: 0.9rem;">흰색 배경에서 대비를 위해 어두운 색상 사용</p>
+            <div class="neutral-grid" id="neutral-light"></div>
+          </div>
+          
+          <div class="theme-section theme-dark">
+            <span class="theme-label">Dark Theme</span>
+            <h3 style="margin-bottom: 0.5rem;">어두운 배경에서의 Neutral 색상</h3>
+            <p style="color: #a1a1aa; font-size: 0.9rem;">검은색 배경에서 대비를 위해 밝은 색상 사용</p>
+            <div class="neutral-grid" id="neutral-dark"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="usage-section" style="margin-top: 2rem;">
+        <h3 class="usage-title">⚠️ 색상 시스템 차이점</h3>
+        <div class="usage-grid">
+          <div class="usage-card">
+            <h4>🎨 Tailwind Neutral</h4>
+            <p><strong>사용:</strong> bg-neutral-*, text-neutral-*</p>
+            <p><strong>특징:</strong> 고정된 색상 값</p>
+            <p><strong>테마:</strong> 수동으로 dark: 클래스 필요</p>
+            <div class="code-block" style="margin-top: 0.5rem;">
+&lt;div class="bg-neutral-100 dark:bg-neutral-900"&gt;
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>🎨 PrimeVue Surface</h4>
+            <p><strong>사용:</strong> CSS 변수 또는 surface-* 클래스</p>
+            <p><strong>특징:</strong> 테마에 따라 자동 변경</p>
+            <p><strong>Light:</strong> Slate 색상 사용</p>
+            <p><strong>Dark:</strong> Zinc 색상 사용</p>
+            <div class="code-block" style="margin-top: 0.5rem;">
+background: var(--p-surface-100);
+/* 자동으로 테마 전환 */
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>💡 권장 사항</h4>
+            <p><strong>통합 방법:</strong></p>
+            <p>• PrimeVue 컴포넌트: surface 자동 적용</p>
+            <p>• 커스텀 컴포넌트: CSS 변수 사용</p>
+            <p>• Tailwind 유틸리티: zinc/slate 직접 사용</p>
+            <div class="code-block" style="margin-top: 0.5rem;">
+/* Light 테마 */
+bg-slate-100
+/* Dark 테마 */
+dark:bg-zinc-900
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="usage-section" style="margin-top: 2rem; background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 1.5rem;">
+        <h3 style="color: #92400e; margin-bottom: 1rem;">⚠️ 현재 문제점</h3>
+        <p style="color: #78350f; margin-bottom: 0.5rem;">
+          <strong>1. 색상 시스템 중복:</strong> Tailwind의 neutral과 PrimeVue의 surface가 같은 역할이지만 다른 값 사용
+        </p>
+        <p style="color: #78350f; margin-bottom: 0.5rem;">
+          <strong>2. 테마 전환 불일치:</strong> bg-neutral-*은 수동 dark: 클래스 필요, PrimeVue는 자동 전환
+        </p>
+        <p style="color: #78350f;">
+          <strong>3. 해결 방안:</strong> Tailwind config에서 neutral을 PrimeVue surface 변수로 매핑하거나, 
+          일관된 색상 시스템 하나만 사용 권장
+        </p>
+      </div>
+    </div>
+
+    <!-- Usage Guide -->
+    <div id="usage" class="content">
+      <div class="section-header">
+        <h2>사용 가이드</h2>
+        <p>개발자를 위한 색상 사용 방법</p>
+      </div>
+
+      <div class="usage-section">
+        <h3 class="usage-title">Tailwind CSS 사용법</h3>
+        <div class="usage-grid">
+          <div class="usage-card">
+            <h4>텍스트 색상</h4>
+            <div class="code-block">
+&lt;div class="text-zinc-500"&gt;
+&lt;div class="text-blue-600"&gt;
+&lt;div class="dark-theme:text-neutral-200"&gt;
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>배경 색상</h4>
+            <div class="code-block">
+&lt;div class="bg-gray-100"&gt;
+&lt;div class="bg-emerald-500"&gt;
+&lt;div class="dark-theme:bg-zinc-900"&gt;
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>보더 색상</h4>
+            <div class="code-block">
+&lt;div class="border-neutral-300"&gt;
+&lt;div class="border-teal-400"&gt;
+&lt;div class="dark-theme:border-zinc-700"&gt;
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="usage-section">
+        <h3 class="usage-title">PrimeVue CSS 변수</h3>
+        <div class="usage-grid">
+          <div class="usage-card">
+            <h4>Primary 색상</h4>
+            <div class="code-block">
+color: var(--p-primary-color);
+background: var(--p-primary-hover-color);
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>Surface 색상</h4>
+            <div class="code-block">
+background: var(--p-surface-100);
+border: 1px solid var(--p-surface-300);
+            </div>
+          </div>
+          <div class="usage-card">
+            <h4>텍스트 색상</h4>
+            <div class="code-block">
+color: var(--p-text-color);
+color: var(--p-text-muted-color);
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Content -->
+    <div id="statistics" class="content">
+      <div class="section-header">
+        <h2>📊 실제 사용 통계</h2>
+        <p>레포지토리에서 실제로 사용 중인 색상 및 클래스 분석</p>
+      </div>
+
+      <!-- Tailwind Usage Stats -->
+      <div class="usage-section">
+        <h3 class="usage-title">🎨 Tailwind CSS 사용 현황</h3>
+        <div id="tailwind-stats-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Background Classes (bg-*)</h4>
+            <div id="tailwind-bg-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Text Classes (text-*)</h4>
+            <div id="tailwind-text-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Border Classes (border*)</h4>
+            <div id="tailwind-border-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Shadow & Rounded Classes</h4>
+            <div id="tailwind-other-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+          <h4 style="color: #3b82f6; margin-bottom: 1rem;">🎨 색상별 사용 빈도</h4>
+          <div id="tailwind-colors-chart" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
+        </div>
+      </div>
+
+      <!-- PrimeVue Usage Stats -->
+      <div class="usage-section" style="margin-top: 3rem;">
+        <h3 class="usage-title">🎨 PrimeVue 사용 현황</h3>
+        <div id="primevue-stats-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">컴포넌트 사용 빈도</h4>
+            <div id="primevue-component-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">CSS 변수 사용</h4>
+            <div id="primevue-css-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Surface 클래스 사용</h4>
+            <div id="primevue-surface-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+          <div>
+            <h4 style="color: #3b82f6; margin-bottom: 1rem;">Severity 클래스 사용</h4>
+            <div id="primevue-severity-stats" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM ready, starting to load color data...');
+    });
+    
+    // Load color data
+    let tailwindColors = {};
+    let primevueColors = {
+      primitiveColors: {},
+      semanticTokens: {
+        light: {},
+        dark: {}
+      }
+    };
+
+    // Fetch Tailwind colors
+    fetch('tailwind.json')
+      .then(res => res.json())
+      .then(data => {
+        tailwindColors = data;
+        renderTailwindColors();
+      })
+      .catch(() => {
+        // Fallback data if file not found
+        tailwindColors = {
+          overriddenColors: {
+            zinc: {"50":"#fafafa","100":"#8282821a","200":"#e4e4e7","300":"#d4d4d8","400":"#A1A3AE","500":"#71717a","600":"#52525b","700":"#38393b","800":"#262729","900":"#18181b","950":"#09090b"},
+            gray: {"50":"#f8fbfc","100":"#f3f6fa","200":"#edf2f7","300":"#e2e8f0","400":"#cbd5e0","500":"#a0aec0","600":"#718096","700":"#4a5568","800":"#2d3748","900":"#1a202c","950":"#0a1016"},
+            teal: {"50":"#f0fdfa","100":"#e0fcff","200":"#bef8fd","300":"#87eaf2","400":"#54d1db","500":"#38bec9","600":"#2cb1bc","700":"#14919b","800":"#0e7c86","900":"#005860","950":"#022c28"},
+            blue: {"50":"#eff6ff","100":"#ebf8ff","200":"#bee3f8","300":"#90cdf4","400":"#63b3ed","500":"#4299e1","600":"#3182ce","700":"#2b6cb0","800":"#2c5282","900":"#2a4365","950":"#172554"},
+            green: {"50":"#fcfff5","100":"#fafff3","200":"#eaf9c9","300":"#d1efa0","400":"#b2e16e","500":"#96ce4c","600":"#7bb53d","700":"#649934","800":"#507b2e","900":"#456829","950":"#355819"},
+            fuchsia: {"50":"#fdf4ff","100":"#fae8ff","200":"#f5d0fe","300":"#f0abfc","400":"#e879f9","500":"#d946ef","600":"#c026d3","700":"#a21caf","800":"#86198f","900":"#701a75","950":"#4a044e"},
+            orange: {"50":"#fff7ed","100":"#ffedd5","200":"#fedbb8","300":"#fbd38d","400":"#f6ad55","500":"#ed8936","600":"#dd6b20","700":"#c05621","800":"#9c4221","900":"#7b341e","950":"#431407"}
+          },
+          defaultColors: {
+            slate: {"50":"#f8fafc","100":"#f1f5f9","200":"#e2e8f0","300":"#cbd5e1","400":"#94a3b8","500":"#64748b","600":"#475569","700":"#334155","800":"#1e293b","900":"#0f172a","950":"#020617"},
+            neutral: {"50":"#fafafa","100":"#f5f5f5","200":"#e5e5e5","300":"#d4d4d4","400":"#a3a3a3","500":"#737373","600":"#525252","700":"#404040","800":"#262626","900":"#171717","950":"#0a0a0a"},
+            stone: {"50":"#fafaf9","100":"#f5f5f4","200":"#e7e5e4","300":"#d6d3d1","400":"#a8a29e","500":"#78716c","600":"#57534e","700":"#44403c","800":"#292524","900":"#1c1917","950":"#0c0a09"},
+            red: {"50":"#fef2f2","100":"#fee2e2","200":"#fecaca","300":"#fca5a5","400":"#f87171","500":"#ef4444","600":"#dc2626","700":"#b91c1c","800":"#991b1b","900":"#7f1d1d","950":"#450a0a"},
+            amber: {"50":"#fffbeb","100":"#fef3c7","200":"#fde68a","300":"#fcd34d","400":"#fbbf24","500":"#f59e0b","600":"#d97706","700":"#b45309","800":"#92400e","900":"#78350f","950":"#451a03"},
+            yellow: {"50":"#fefce8","100":"#fef9c3","200":"#fef08a","300":"#fde047","400":"#facc15","500":"#eab308","600":"#ca8a04","700":"#a16207","800":"#854d0e","900":"#713f12","950":"#422006"},
+            lime: {"50":"#f7fee7","100":"#ecfccb","200":"#d9f99d","300":"#bef264","400":"#a3e635","500":"#84cc16","600":"#65a30d","700":"#4d7c0f","800":"#3f6212","900":"#365314","950":"#1a2e05"},
+            emerald: {"50":"#ecfdf5","100":"#d1fae5","200":"#a7f3d0","300":"#6ee7b7","400":"#34d399","500":"#10b981","600":"#059669","700":"#047857","800":"#065f46","900":"#064e3b","950":"#022c22"},
+            cyan: {"50":"#ecfeff","100":"#cffafe","200":"#a5f3fc","300":"#67e8f9","400":"#22d3ee","500":"#06b6d4","600":"#0891b2","700":"#0e7490","800":"#155e75","900":"#164e63","950":"#083344"},
+            sky: {"50":"#f0f9ff","100":"#e0f2fe","200":"#bae6fd","300":"#7dd3fc","400":"#38bdf8","500":"#0ea5e9","600":"#0284c7","700":"#0369a1","800":"#075985","900":"#0c4a6e","950":"#082f49"},
+            blue: {"50":"#eff6ff","100":"#dbeafe","200":"#bfdbfe","300":"#93c5fd","400":"#60a5fa","500":"#3b82f6","600":"#2563eb","700":"#1d4ed8","800":"#1e40af","900":"#1e3a8a","950":"#172554"},
+            indigo: {"50":"#eef2ff","100":"#e0e7ff","200":"#c7d2fe","300":"#a5b4fc","400":"#818cf8","500":"#6366f1","600":"#4f46e5","700":"#4338ca","800":"#3730a3","900":"#312e81","950":"#1e1b4b"},
+            violet: {"50":"#f5f3ff","100":"#ede9fe","200":"#ddd6fe","300":"#c4b5fd","400":"#a78bfa","500":"#8b5cf6","600":"#7c3aed","700":"#6d28d9","800":"#5b21b6","900":"#4c1d95","950":"#2e1065"},
+            purple: {"50":"#faf5ff","100":"#f3e8ff","200":"#e9d5ff","300":"#d8b4fe","400":"#c084fc","500":"#a855f7","600":"#9333ea","700":"#7e22ce","800":"#6b21a8","900":"#581c87","950":"#3b0764"},
+            pink: {"50":"#fdf2f8","100":"#fce7f3","200":"#fbcfe8","300":"#f9a8d4","400":"#f472b6","500":"#ec4899","600":"#db2777","700":"#be185d","800":"#9d174d","900":"#831843","950":"#500724"},
+            rose: {"50":"#fff1f2","100":"#ffe4e6","200":"#fecdd3","300":"#fda4af","400":"#fb7185","500":"#f43f5e","600":"#e11d48","700":"#be123c","800":"#9f1239","900":"#881337","950":"#4c0519"},
+            black: "#000",
+            white: "#fff",
+            transparent: "transparent",
+            currentColor: "currentColor"
+          }
+        };
+        renderTailwindColors();
+      });
+
+    // Fetch PrimeVue colors - try primevue-color-tokens.json first for complete data
+    fetch('primevue-color-tokens.json')
+      .then(res => res.json())
+      .then(data => {
+        console.log('Loaded primevue-color-tokens.json:', data);
+        primevueColors = data;
+        // Add note about primary color
+        if (primevueColors.note) {
+          primevueColors.note.primaryColor = "Blue is the primary color (not emerald)";
+        }
+        renderPrimevueColors();
+        renderNeutralComparison();
+      })
+      .catch((error) => {
+        console.error('Error loading primevue-color-tokens.json:', error);
+        // Fallback to primevue.json
+        fetch('primevue.json')
+          .then(res => res.json())
+          .then(data => {
+            console.log('Loaded primevue.json:', data);
+            primevueColors = data;
+            renderPrimevueColors();
+            renderNeutralComparison();
+          })
+          .catch((error2) => {
+            console.error('Error loading primevue.json:', error2);
+            // Final fallback - inline data
+            console.log('Loading fallback PrimeVue data');
+            renderPrimevueColors();
+            renderNeutralComparison();
+          });
+      });
+
+    function showTab(tabName) {
+      // Update tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update content
+      document.querySelectorAll('.content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    function createColorCard(name, colors, badge = '') {
+      let html = `
+        <div class="color-family">
+          <div class="color-family-header">
+            <span class="color-family-name">${name.charAt(0).toUpperCase() + name.slice(1)}</span>
+            ${badge ? `<span class="color-badge">${badge}</span>` : ''}
+          </div>
+      `;
+      
+      for (const [shade, hex] of Object.entries(colors)) {
+        if (typeof hex === 'string' && hex.startsWith('#')) {
+          html += `
+            <div class="color-item copy-btn" onclick="copyToClipboard('${hex}')">
+              <div class="color-swatch" style="background-color: ${hex};"></div>
+              <div class="color-info">
+                <span class="color-name">${name}-${shade}</span>
+                <span class="color-hex">${hex}</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+      
+      html += '</div>';
+      return html;
+    }
+
+    function renderTailwindColors() {
+      // Render overridden colors
+      const overriddenGrid = document.getElementById('tailwind-overridden');
+      if (overriddenGrid && tailwindColors.overriddenColors) {
+        overriddenGrid.innerHTML = '';
+        for (const [name, colors] of Object.entries(tailwindColors.overriddenColors)) {
+          overriddenGrid.innerHTML += createColorCard(name, colors, 'Overridden');
+        }
+      }
+
+      // Render default colors
+      const defaultGrid = document.getElementById('tailwind-default');
+      if (defaultGrid && tailwindColors.defaultColors) {
+        defaultGrid.innerHTML = '';
+        
+        // Special colors (single values)
+        const specialColors = {};
+        
+        for (const [name, colors] of Object.entries(tailwindColors.defaultColors)) {
+          if (typeof colors === 'object' && !Array.isArray(colors)) {
+            // Regular color palettes
+            defaultGrid.innerHTML += createColorCard(name, colors);
+          } else if (typeof colors === 'string') {
+            // Single color values (black, white, etc.)
+            specialColors[name] = colors;
+          }
+        }
+        
+        // Add special colors as a single card
+        if (Object.keys(specialColors).length > 0) {
+          let specialCard = '<div class="color-family"><div class="color-family-header"><span class="color-family-name">Special Colors</span></div>';
+          for (const [name, color] of Object.entries(specialColors)) {
+            specialCard += `
+              <div class="color-item copy-btn" onclick="copyToClipboard('${color}')">
+                <div class="color-swatch" style="background-color: ${color === 'transparent' ? 'transparent' : color === 'currentColor' ? '#3b82f6' : color}; ${color === 'transparent' ? 'background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 10px 10px; background-position: 0 0, 0 5px, 5px -5px, -5px 0px;' : ''}"></div>
+                <div class="color-info">
+                  <span class="color-name">${name}</span>
+                  <span class="color-hex">${color}</span>
+                </div>
+              </div>
+            `;
+          }
+          specialCard += '</div>';
+          defaultGrid.innerHTML += specialCard;
+        }
+      }
+    }
+
+    function renderPrimevueColors() {
+      console.log('renderPrimevueColors called with:', primevueColors);
+      
+      // Render primitive colors
+      const primitivesGrid = document.getElementById('primevue-primitives');
+      console.log('primitivesGrid element:', primitivesGrid);
+      console.log('primitiveColors data:', primevueColors?.primitiveColors);
+      
+      if (primitivesGrid) {
+        if (primevueColors && primevueColors.primitiveColors && Object.keys(primevueColors.primitiveColors).length > 0) {
+          primitivesGrid.innerHTML = '';
+          // Show all primitive colors in primevue-color-tokens.json order
+          const primitiveOrder = [
+            'emerald', 'green', 'lime', 'red', 'orange', 'amber', 'yellow',
+            'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple',
+            'fuchsia', 'pink', 'rose', 'slate', 'gray', 'zinc', 'neutral', 'stone'
+          ];
+          let addedCount = 0;
+          for (const name of primitiveOrder) {
+            if (primevueColors.primitiveColors[name]) {
+              const badge = name === 'blue' ? 'Primary' : '';
+              primitivesGrid.innerHTML += createColorCard(name, primevueColors.primitiveColors[name], badge);
+              addedCount++;
+            }
+          }
+          console.log(`Added ${addedCount} primitive color cards`);
+        } else {
+          console.error('No primitive colors data available');
+          primitivesGrid.innerHTML = '<p style="color: red;">No primitive colors data loaded</p>';
+        }
+      } else {
+        console.error('Could not find primevue-primitives element');
+      }
+
+      // Render ALL semantic tokens for light and dark themes
+      renderSemanticTokens();
+    }
+
+    function renderSemanticTokens() {
+      // Render all semantic tokens for both themes
+      const semanticLight = document.getElementById('semantic-light');
+      const semanticDark = document.getElementById('semantic-dark');
+      
+      if (!primevueColors.semanticTokens) return;
+      
+      // Function to render tokens for a theme
+      function renderThemeTokens(container, tokens) {
+        if (!container || !tokens) return;
+        
+        let html = '';
+        
+        // Define the order and structure of semantic token categories
+        const categories = [
+          { key: 'surface', label: '🎨 Surface Colors', type: 'palette' },
+          { key: 'primary', label: '🎯 Primary Colors', type: 'object' },
+          { key: 'highlight', label: '✨ Highlight Colors', type: 'object' },
+          { key: 'mask', label: '🎭 Mask Colors', type: 'object' },
+          { key: 'formField', label: '📝 Form Field Colors', type: 'object' },
+          { key: 'text', label: '📄 Text Colors', type: 'object' },
+          { key: 'content', label: '📦 Content Colors', type: 'object' },
+          { key: 'overlay', label: '🗂️ Overlay Colors', type: 'nested' },
+          { key: 'list', label: '📋 List Colors', type: 'nested' },
+          { key: 'navigation', label: '🧭 Navigation Colors', type: 'nested' }
+        ];
+        
+        for (const category of categories) {
+          const data = tokens[category.key];
+          if (!data) continue;
+          
+          html += `<div style="margin-bottom: 1.5rem;">`;
+          html += `<h4 style="margin-bottom: 0.75rem; font-size: 1rem; font-weight: 600;">${category.label}</h4>`;
+          
+          if (category.type === 'palette') {
+            // Surface colors - show as palette
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem;">';
+            for (const [shade, color] of Object.entries(data)) {
+              if (typeof color === 'string') {
+                html += `
+                  <div style="text-align: center;">
+                    <div style="width: 100%; height: 40px; background: ${color}; border: 1px solid ${tokens === primevueColors.semanticTokens.light ? '#e2e8f0' : '#3f3f46'}; border-radius: 4px; margin-bottom: 0.25rem;"></div>
+                    <div style="font-size: 0.65rem; font-weight: 500;">${shade}</div>
+                    <div style="font-size: 0.6rem; opacity: 0.7; font-family: monospace;">${color}</div>
+                  </div>
+                `;
+              }
+            }
+            html += '</div>';
+          } else if (category.type === 'object') {
+            // Simple object with color properties
+            html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+            for (const [key, value] of Object.entries(data)) {
+              if (typeof value === 'string') {
+                const displayKey = key.replace(/([A-Z])/g, ' $1').toLowerCase();
+                html += `
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 24px; height: 24px; background: ${value}; border: 1px solid ${tokens === primevueColors.semanticTokens.light ? '#e2e8f0' : '#3f3f46'}; border-radius: 4px;"></div>
+                    <span style="font-size: 0.85rem; flex: 1;">${displayKey}</span>
+                    <code style="font-size: 0.75rem; opacity: 0.7; font-family: monospace;">${value}</code>
+                  </div>
+                `;
+              }
+            }
+            html += '</div>';
+          } else if (category.type === 'nested') {
+            // Nested structure (overlay, list, navigation)
+            html += '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            for (const [subKey, subData] of Object.entries(data)) {
+              if (typeof subData === 'object') {
+                html += `<div style="margin-left: 0.5rem;">`;
+                html += `<div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; opacity: 0.8;">${subKey}</div>`;
+                html += '<div style="display: flex; flex-direction: column; gap: 0.4rem; margin-left: 0.5rem;">';
+                
+                // Flatten nested objects
+                function renderNestedProps(obj, prefix = '') {
+                  for (const [k, v] of Object.entries(obj)) {
+                    if (typeof v === 'string') {
+                      const displayKey = prefix ? `${prefix}.${k}` : k;
+                      html += `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                          <div style="width: 20px; height: 20px; background: ${v}; border: 1px solid ${tokens === primevueColors.semanticTokens.light ? '#e2e8f0' : '#3f3f46'}; border-radius: 3px;"></div>
+                          <span style="font-size: 0.8rem; flex: 1;">${displayKey}</span>
+                          <code style="font-size: 0.7rem; opacity: 0.6; font-family: monospace;">${v}</code>
+                        </div>
+                      `;
+                    } else if (typeof v === 'object') {
+                      renderNestedProps(v, k);
+                    }
+                  }
+                }
+                renderNestedProps(subData);
+                
+                html += '</div>';
+                html += '</div>';
+              }
+            }
+            html += '</div>';
+          }
+          
+          html += '</div>';
+        }
+        
+        container.innerHTML = html;
+      }
+      
+      // Render light theme tokens
+      renderThemeTokens(semanticLight, primevueColors.semanticTokens?.light);
+      
+      // Render dark theme tokens
+      renderThemeTokens(semanticDark, primevueColors.semanticTokens?.dark);
+    }
+
+    function getNestedValue(obj, path) {
+      const keys = path.split('.');
+      let value = obj;
+      for (const key of keys) {
+        value = value?.[key];
+        if (value === undefined) break;
+      }
+      return value || 'N/A';
+    }
+
+    function renderNeutralComparison() {
+      const neutralColors = tailwindColors.defaultColors?.neutral || primevueColors.primitiveColors?.neutral || {};
+      
+      // Light theme neutrals
+      const neutralLight = document.getElementById('neutral-light');
+      if (neutralLight) {
+        let html = '';
+        for (const [shade, hex] of Object.entries(neutralColors)) {
+          if (typeof hex === 'string') {
+            html += `
+              <div class="neutral-item">
+                <div class="neutral-swatch" style="background-color: ${hex};"></div>
+                <div class="neutral-label">neutral-${shade}</div>
+                <div class="neutral-hex">${hex}</div>
+              </div>
+            `;
+          }
+        }
+        neutralLight.innerHTML = html;
+      }
+
+      // Dark theme neutrals (same colors but shown on dark background)
+      const neutralDark = document.getElementById('neutral-dark');
+      if (neutralDark) {
+        let html = '';
+        for (const [shade, hex] of Object.entries(neutralColors)) {
+          if (typeof hex === 'string') {
+            html += `
+              <div class="neutral-item">
+                <div class="neutral-swatch" style="background-color: ${hex};"></div>
+                <div class="neutral-label">neutral-${shade}</div>
+                <div class="neutral-hex">${hex}</div>
+              </div>
+            `;
+          }
+        }
+        neutralDark.innerHTML = html;
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        // Show feedback
+        const el = event.currentTarget;
+        const hex = el.querySelector('.color-hex');
+        const originalText = hex.textContent;
+        hex.textContent = '복사됨!';
+        setTimeout(() => {
+          hex.textContent = originalText;
+        }, 1000);
+      });
+    }
+
+    // Load and display usage statistics
+    function loadUsageStatistics() {
+      // Load Tailwind stats
+      fetch('tailwind-usage-stats.json')
+        .then(res => res.json())
+        .then(data => {
+          displayTailwindStats(data);
+        })
+        .catch(err => {
+          console.error('Error loading Tailwind stats:', err);
+          document.getElementById('tailwind-stats-summary').innerHTML = '<p style="color: red;">통계 데이터를 불러올 수 없습니다.</p>';
+        });
+
+      // Load PrimeVue stats
+      fetch('primevue-usage-stats.json')
+        .then(res => res.json())
+        .then(data => {
+          displayPrimeVueStats(data);
+        })
+        .catch(err => {
+          console.error('Error loading PrimeVue stats:', err);
+          document.getElementById('primevue-stats-summary').innerHTML = '<p style="color: red;">통계 데이터를 불러올 수 없습니다.</p>';
+        });
+    }
+
+    function displayTailwindStats(data) {
+      // Summary cards
+      const summary = document.getElementById('tailwind-stats-summary');
+      if (summary) {
+        let totalUsage = 0;
+        Object.values(data.categories).forEach(cat => {
+          totalUsage += cat.total;
+        });
+        
+        summary.innerHTML = `
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #3b82f6;">총 사용 횟수</h4>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0;">${totalUsage}</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #10b981;">Background</h4>
+            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">${data.categories.background.total}</p>
+            <p style="font-size: 0.9rem; color: #666;">${data.categories.background.unique} 종류</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #f59e0b;">Text</h4>
+            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">${data.categories.text.total}</p>
+            <p style="font-size: 0.9rem; color: #666;">${data.categories.text.unique} 종류</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #ef4444;">Border</h4>
+            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">${data.categories.border.total}</p>
+            <p style="font-size: 0.9rem; color: #666;">${data.categories.border.unique} 종류</p>
+          </div>
+        `;
+      }
+
+      // Background classes - only color-related
+      const bgStats = document.getElementById('tailwind-bg-stats');
+      if (bgStats && data.categories.background) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.categories.background.classes).forEach(([cls, count]) => {
+          // Filter out non-color classes
+          if (cls.includes('opacity') || cls.includes('gradient') || 
+              cls === 'bg-transparent' || cls === 'bg-black' || cls === 'bg-white' ||
+              cls === 'bg-cover' || cls === 'bg-center' || cls === 'bg-no-repeat' || 
+              cls === 'bg-unset' || cls === 'bg-origin-padding' || cls === 'bg-right-top' ||
+              cls.includes('elevation') || cls === 'bg-primary' ||
+              cls.match(/bg-(zinc|gray|neutral|slate|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|surface)-/)) {
+            
+            const bgColor = getColorPreview(cls);
+            if (cls.includes('opacity') || !cls.match(/bg-(zinc|gray|neutral|slate|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|surface|black|white|transparent)-/)) {
+              return; // Skip non-color classes
+            }
+            
+            html += `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  ${bgColor ? `<span style="display: inline-block; width: 20px; height: 20px; background: ${bgColor}; border: 1px solid #e2e8f0; border-radius: 4px;"></span>` : ''}
+                  <code style="font-family: monospace;">${cls}</code>
+                </div>
+                <span style="color: #666; font-weight: 500;">${count}회</span>
+              </div>
+            `;
+          }
+        });
+        html += '</div>';
+        bgStats.innerHTML = html;
+      }
+
+      // Text classes - only color-related
+      const textStats = document.getElementById('tailwind-text-stats');
+      if (textStats && data.categories.text) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.categories.text.classes).forEach(([cls, count]) => {
+          // Filter out non-color classes (size, alignment, etc.)
+          if (cls.match(/text-(zinc|gray|neutral|slate|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|surface|black|white|muted|highlight|primary)-/) ||
+              cls === 'text-white' || cls === 'text-black' || cls === 'text-muted' || cls === 'text-highlight') {
+            html += `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+                <code style="font-family: monospace;">${cls}</code>
+                <span style="color: #666; font-weight: 500;">${count}회</span>
+              </div>
+            `;
+          }
+        });
+        html += '</div>';
+        textStats.innerHTML = html;
+      }
+
+      // Border classes
+      const borderStats = document.getElementById('tailwind-border-stats');
+      if (borderStats && data.categories.border) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.categories.border.classes).forEach(([cls, count]) => {
+          // Filter out non-color border classes
+          if (cls.match(/border-(zinc|gray|neutral|slate|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|surface|black|white|muted|highlight|primary)-/) ||
+              cls === 'border-black' || cls === 'border-white' || cls === 'border-surface' || cls === 'border-surface-border') {
+            html += `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+                <code style="font-family: monospace;">${cls}</code>
+                <span style="color: #666; font-weight: 500;">${count}회</span>
+              </div>
+            `;
+          }
+        });
+        html += '</div>';
+        borderStats.innerHTML = html;
+      }
+
+      // Shadow and Rounded classes
+      const otherStats = document.getElementById('tailwind-other-stats');
+      if (otherStats && data.categories.shadow && data.categories.rounded) {
+        let html = '<div style="font-size: 0.9rem;">';
+        html += '<div style="font-weight: 600; padding: 0.5rem; background: #f8f9fa;">Shadow Classes</div>';
+        Object.entries(data.categories.shadow.classes).forEach(([cls, count]) => {
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <code style="font-family: monospace;">${cls}</code>
+              <span style="color: #666; font-weight: 500;">${count}회</span>
+            </div>
+          `;
+        });
+        html += '<div style="font-weight: 600; padding: 0.5rem; background: #f8f9fa; margin-top: 1rem;">Rounded Classes</div>';
+        Object.entries(data.categories.rounded.classes).forEach(([cls, count]) => {
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <code style="font-family: monospace;">${cls}</code>
+              <span style="color: #666; font-weight: 500;">${count}회</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+        otherStats.innerHTML = html;
+      }
+
+      // Color usage chart
+      const colorChart = document.getElementById('tailwind-colors-chart');
+      if (colorChart && data.usedTailwindColors) {
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">';
+        Object.entries(data.usedTailwindColors).forEach(([color, count]) => {
+          const bgColor = getColorForName(color);
+          html += `
+            <div style="text-align: center; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <div style="width: 60px; height: 60px; margin: 0 auto 0.5rem; background: ${bgColor}; border-radius: 8px; border: 1px solid #cbd5e1;"></div>
+              <div style="font-weight: 600;">${color}</div>
+              <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;">${count}</div>
+              <div style="font-size: 0.85rem; color: #666;">사용 횟수</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+        colorChart.innerHTML = html;
+      }
+    }
+
+    function displayPrimeVueStats(data) {
+      // Summary cards
+      const summary = document.getElementById('primevue-stats-summary');
+      if (summary) {
+        summary.innerHTML = `
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #3b82f6;">분석 파일 수</h4>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0;">${data.summary.totalFiles}</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #10b981;">PrimeVue 사용 파일</h4>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0;">${data.summary.filesUsingPrimeVue}</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #f59e0b;">컴포넌트 종류</h4>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0;">${data.summary.uniqueComponents}</p>
+          </div>
+          <div class="usage-card" style="text-align: center;">
+            <h4 style="color: #ef4444;">총 컴포넌트 사용</h4>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0;">${data.summary.totalComponentUses}</p>
+          </div>
+        `;
+      }
+
+      // Components
+      const componentStats = document.getElementById('primevue-component-stats');
+      if (componentStats && data.components) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.components).forEach(([name, count]) => {
+          const percentage = ((count / data.summary.totalComponentUses) * 100).toFixed(1);
+          html += `
+            <div style="padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <code style="font-family: monospace;">${name}</code>
+                <span style="color: #666; font-weight: 500;">${count}회</span>
+              </div>
+              <div style="margin-top: 0.25rem; height: 4px; background: #e2e8f0; border-radius: 2px;">
+                <div style="height: 100%; background: #3b82f6; border-radius: 2px; width: ${percentage}%;"></div>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+        componentStats.innerHTML = html;
+      }
+
+      // CSS Variables
+      const cssStats = document.getElementById('primevue-css-stats');
+      if (cssStats && data.cssVariables) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.cssVariables).forEach(([name, count]) => {
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <code style="font-family: monospace; font-size: 0.85rem;">--p-${name.replace(/([A-Z])/g, '-$1').toLowerCase()}</code>
+              <span style="color: #666; font-weight: 500;">${count}회</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+        cssStats.innerHTML = html;
+      }
+
+      // Surface classes
+      const surfaceStats = document.getElementById('primevue-surface-stats');
+      if (surfaceStats && data.surfaceClasses) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.surfaceClasses).forEach(([name, count]) => {
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <code style="font-family: monospace;">${name.replace(/([A-Z])/g, '-$1').toLowerCase()}</code>
+              <span style="color: #666; font-weight: 500;">${count}회</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+        surfaceStats.innerHTML = html;
+      }
+
+      // Severity classes
+      const severityStats = document.getElementById('primevue-severity-stats');
+      if (severityStats && data.severityClasses) {
+        let html = '<div style="font-size: 0.9rem;">';
+        Object.entries(data.severityClasses).forEach(([name, count]) => {
+          const color = name === 'primary' ? '#3b82f6' : name === 'danger' ? '#ef4444' : '#6b7280';
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #f1f3f5;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: inline-block; width: 20px; height: 20px; background: ${color}; border-radius: 4px;"></span>
+                <code style="font-family: monospace;">p-*-${name}</code>
+              </div>
+              <span style="color: #666; font-weight: 500;">${count}회</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+        severityStats.innerHTML = html;
+      }
+    }
+
+    function getColorPreview(className) {
+      // Simple color mapping for preview
+      const colorMap = {
+        'black': '#000000',
+        'white': '#ffffff',
+        'transparent': 'transparent',
+        'blue-500': '#3b82f6',
+        'blue-400': '#60a5fa',
+        'red-500': '#ef4444',
+        'green-500': '#10b981',
+        'gray-100': '#f3f4f6',
+        'gray-700': '#374151',
+        'gray-800': '#1f2937',
+        'neutral-100': '#f5f5f5',
+        'neutral-700': '#404040',
+        'neutral-800': '#262626',
+        'neutral-900': '#171717',
+        'zinc-50': '#fafafa',
+        'zinc-100': '#f4f4f5',
+        'zinc-700': '#3f3f46',
+        'zinc-800': '#27272a'
+      };
+      
+      for (const [key, value] of Object.entries(colorMap)) {
+        if (className.includes(key)) {
+          return value;
+        }
+      }
+      return null;
+    }
+
+    function getColorForName(colorName) {
+      const colors = {
+        'zinc': '#71717a',
+        'gray': '#6b7280',
+        'neutral': '#737373',
+        'slate': '#64748b',
+        'red': '#ef4444',
+        'orange': '#f97316',
+        'amber': '#f59e0b',
+        'yellow': '#eab308',
+        'lime': '#84cc16',
+        'green': '#22c55e',
+        'emerald': '#10b981',
+        'teal': '#14b8a6',
+        'cyan': '#06b6d4',
+        'sky': '#0ea5e9',
+        'blue': '#3b82f6',
+        'indigo': '#6366f1',
+        'violet': '#8b5cf6',
+        'purple': '#a855f7',
+        'fuchsia': '#d946ef',
+        'pink': '#ec4899',
+        'rose': '#f43f5e',
+        'black': '#000000',
+        'white': '#ffffff',
+        'transparent': 'transparent'
+      };
+      return colors[colorName] || '#e2e8f0';
+    }
+
+    // Load statistics when statistics tab is shown
+    let statsLoaded = false;
+    const originalShowTab = window.showTab;
+    window.showTab = function(tabName) {
+      originalShowTab(tabName);
+      if (tabName === 'statistics' && !statsLoaded) {
+        statsLoaded = true;
+        loadUsageStatistics();
+      }
+    };
+  </script>
+</body>
+</html>
