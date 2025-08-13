@@ -6,7 +6,7 @@ This repository contains comprehensive documentation for the ComfyUI frontend co
 
 ### 📖 View Documentation
 
-Visit the live documentation: [https://your-username.github.io/comfyui-color-docs/](https://your-username.github.io/comfyui-color-docs/)
+Visit the live documentation: [https://viva-jinyi.github.io/comfyui-color-docs/](https://viva-jinyi.github.io/comfyui-color-docs/)
 
 ### 📁 Contents
 
