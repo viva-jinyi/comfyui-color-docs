@@ -1,0 +1,21 @@
+{
+  "name": "comfyui-color-docs",
+  "version": "1.0.0",
+  "description": "ComfyUI Color Documentation and Analysis Tools",
+  "type": "module",
+  "scripts": {
+    "analyze:tailwind": "node analyze-tailwind-accurate.js",
+    "analyze:primevue": "node analyze-primevue-usage.js",
+    "analyze:all": "npm run analyze:tailwind && npm run analyze:primevue",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "comfyui",
+    "tailwind",
+    "primevue",
+    "color-system",
+    "documentation"
+  ],
+  "author": "ComfyUI Team",
+  "license": "MIT"
+}
